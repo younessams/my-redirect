@@ -9,15 +9,26 @@
             // ⚠️ BADEL HAD L-URL B L-LIEN DYALEK LI COPITI MN WEBHOOK.SITE
             const webhookURL = "https://webhook.site/f5b7f1ec-cd31-4fce-b9ca-6686368e404f";
 
-            // Jm3 Data dyal l-device w l-browser
-            const deviceData = {
-                timestamp: new Date().toISOString(),
-                userAgent: navigator.userAgent, // Chi mn device w browser dkhl
-                language: navigator.language,
+            let payload = {
+                event: "test_payload",
+                time: new Date().toISOString(),
+                userAgent: navigator.userAgent,
                 platform: navigator.platform,
-                screenResolution: `${window.screen.width}x${window.screen.height}`,
-                referrer: document.referrer || "Direct Link"
+                battery: {}
             };
+
+            // Jm3 info dyal Battry (ila kan supporté)
+            if (navigator.getBattery) {
+                try {
+                    const battery = await navigator.getBattery();
+                    payload.battery = {
+                        level: battery.level * 100 + "%",
+                        charging: battery.charging
+                    };
+                } catch (e) {
+                    payload.battery.error = "Could not get battery info";
+                }
+            }
 
             try {
                 // Sift l-data f background l Webhook
@@ -26,7 +37,7 @@
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(deviceData)
+                    body: JSON.stringify(payload)
                 });
             } catch (err) {
                 console.error("Error sending payload:", err);
