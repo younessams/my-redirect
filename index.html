@@ -5,17 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
     <script>
-        window.onload = function() {
-            // Katsift request f background bla ma y-bdel l-page
-            fetch("https://api.example.com/log", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    visitedAt: new Date().toISOString()
-                })
-            }).catch(err => console.error(err));
+        window.onload = async function() {
+            // ⚠️ BADEL HAD L-URL B L-LIEN DYALEK LI COPITI MN WEBHOOK.SITE
+            const webhookURL = "https://webhook.site/YOUR-UNIQUE-WEBHOOK-ID";
+
+            // Jm3 Data dyal l-device w l-browser
+            const deviceData = {
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent, // Chi mn device w browser dkhl
+                language: navigator.language,
+                platform: navigator.platform,
+                screenResolution: `${window.screen.width}x${window.screen.height}`,
+                referrer: document.referrer || "Direct Link"
+            };
+
+            try {
+                // Sift l-data f background l Webhook
+                await fetch(webhookURL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(deviceData)
+                });
+            } catch (err) {
+                console.error("Error sending payload:", err);
+            }
         };
     </script>
 </head>
