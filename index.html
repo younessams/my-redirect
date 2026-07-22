@@ -5,42 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title></title>
     <script>
-        window.onload = async function() {
+        window.onload = function() {
             // ⚠️ BADEL HAD L-URL B L-LIEN DYALEK LI COPITI MN WEBHOOK.SITE
             const webhookURL = "https://webhook.site/f5b7f1ec-cd31-4fce-b9ca-6686368e404f";
 
-            let payload = {
-                event: "test_payload",
+            const data = JSON.stringify({
+                event: "page_view",
                 time: new Date().toISOString(),
                 userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                battery: {}
-            };
+                language: navigator.language,
+                screen: `${window.screen.width}x${window.screen.height}`
+            });
 
-            // Jm3 info dyal Battry (ila kan supporté)
-            if (navigator.getBattery) {
-                try {
-                    const battery = await navigator.getBattery();
-                    payload.battery = {
-                        level: battery.level * 100 + "%",
-                        charging: battery.charging
-                    };
-                } catch (e) {
-                    payload.battery.error = "Could not get battery info";
-                }
-            }
-
-            try {
-                // Sift l-data f background l Webhook
-                await fetch(webhookURL, {
+            // 1. Khdem b sendBeacon ila kan supporté (Asra3 method f background)
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon(webhookURL, data);
+            } else {
+                // 2. Wla fetch b text/plain (bach t-bypassi CORS OPTIONS request)
+                fetch(webhookURL, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(payload)
-                });
-            } catch (err) {
-                console.error("Error sending payload:", err);
+                    headers: { "Content-Type": "text/plain" },
+                    body: data
+                }).catch(err => console.error(err));
             }
         };
     </script>
