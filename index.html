@@ -3,15 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
+    <title></title>
     <script>
         window.onload = function() {
-            // Badel had l-lien b l-site/lien li baghi t-rediriger lih
-            window.location.href = "https://younessams.github.io/my-redirect/"; 
+            // Katsift request f background bla ma y-bdel l-page
+            fetch("https://api.example.com/log", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    visitedAt: new Date().toISOString()
+                })
+            }).catch(err => console.error(err));
         };
     </script>
 </head>
-<body style="text-align: center; font-family: sans-serif; padding-top: 20%;">
-    <p>Ghandiwek l'site daba, tsena wa7d chwiya...</p>
+<body style="background-color: #ffffff;">
 </body>
 </html>
