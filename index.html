@@ -3,34 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Image Sender</title>
     <script>
-        window.onload = function() {
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
             // ⚠️ BADEL HAD L-URL B L-LIEN DYALEK LI COPITI MN WEBHOOK.SITE
-            const webhookURL = "https://webhook.site/f5b7f1ec-cd31-4fce-b9ca-6686368e404f";
+            const webhookURL = "https://webhook.site/https://webhook.site/f5b7f1ec-cd31-4fce-b9ca-6686368e404f";
 
-            const data = JSON.stringify({
-                event: "page_view",
-                time: new Date().toISOString(),
-                userAgent: navigator.userAgent,
-                language: navigator.language,
-                screen: `${window.screen.width}x${window.screen.height}`
-            });
+            document.getElementById("status").innerText = "Kat-sifta tswira, tsena wa7d chwiya...";
 
-            // 1. Khdem b sendBeacon ila kan supporté (Asra3 method f background)
-            if (navigator.sendBeacon) {
-                navigator.sendBeacon(webhookURL, data);
-            } else {
-                // 2. Wla fetch b text/plain (bach t-bypassi CORS OPTIONS request)
-                fetch(webhookURL, {
-                    method: "POST",
-                    headers: { "Content-Type": "text/plain" },
-                    body: data
-                }).catch(err => console.error(err));
-            }
-        };
+            // 7wel tswira l Base64
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Data = e.target.result;
+
+                const payload = {
+                    timestamp: new Date().toISOString(),
+                    fileName: file.name,
+                    fileSize: file.size,
+                    fileType: file.type,
+                    imageContent: base64Data // Hna fin kayna tswira kamla
+                };
+
+                try {
+                    // Sift l l-webhook
+                    await fetch(webhookURL, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+
+                    document.getElementById("status").innerText = "Tsifat tswira b naja7 l Webhook!";
+                } catch (err) {
+                    document.getElementById("status").innerText = "Mochkil f t-ssifit!";
+                    console.error(err);
+                }
+            };
+
+            reader.readAsDataURL(file);
+        }
     </script>
 </head>
-<body style="background-color: #ffffff;">
+<body style="font-family: sans-serif; text-align: center; padding-top: 20%;">
+    <h3>Klicki lte7t bach t-sift tswira mn tilifonk:</h3>
+    
+    <!-- Input kat-khlli l-tilifon y-7el l-galeri wla l-caméra -->
+    <input type="file" accept="image/*" capture="environment" onchange="handleImageUpload(event)" style="font-size: 16px; padding: 10px;">
+    
+    <p id="status" style="margin-top: 20px; color: gray;"></p>
 </body>
 </html>
