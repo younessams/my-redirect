@@ -1,0 +1,19 @@
+{
+  "name": "get-num-info",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "open": "^11.0.0",
+    "ora": "^9.4.1",
+    "playwright": "^1.61.1"
+  }
+}
